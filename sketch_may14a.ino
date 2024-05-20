@@ -1,16 +1,18 @@
 #include <Servo.h>
-#include <Serial.h>
 
-#define SERVO_PIN_1 2; // tbd
-#define SERVO_PIN_2 3; // also tbd
+#define SERVO_PIN_1 25; // tbd
+#define SERVO_PIN_2 26; // also tbd
 
 Servo s1; 
 Servo s2; 
 
+enum state_enum{SEARCH, LEFT, RIGHT, CENTER};
+int state = SEARCH;
+
 void setup() {
   // put your setup code here, to run once:
-  s1.attach(SERVO_PIN_1);
-  s2.attach(SERVO_PIN_2);
+  s1.attach(25);
+  s2.attach(26);
   s1.writeMicroseconds(1500);
   s2.writeMicroseconds(1500);
   Serial.begin(9600);
@@ -29,20 +31,34 @@ int angleConstrain(int currentAngle){
 
 void loop() {
   // put your main code here, to run repeatedly:
+
   if(Serial.available() > 0){
+    Serial.println("RECEIVED TARGET");
     String input = Serial.readString();
-    switch(input){
-      case "LEFT":
+
+    if(input.equals("LEFT")){
+      state = LEFT; 
+    }else if(input.equals("RIGHT")){
+      state = RIGHT;
+    }else if(input.equals("CENTER")){
+      state = CENTER;
+    }
+
+    switch(state){
+      case LEFT:
         currPos -= 10;
         s1.writeMicroseconds(angleConstrain(currPos));
+        Serial.println("AIMING LEFT");
         break;
-      case "RIGHT":
+      case RIGHT:
         currPos += 10;
-        s1.writeMicroSeconds(angleConstrain(currPos));
+        s1.writeMicroseconds(angleConstrain(currPos));
+        Serial.println("AIMING RIGHT");
         break;
-      case "CENTER":
+      case CENTER:
+        Serial.println("TARGET CENTERED");
         break;
-      
+
       default: 
         break;
     }
