@@ -11,11 +11,14 @@ int state = SEARCH;
 
 void setup() {
   // put your setup code here, to run once:
-  s1.attach(25);
-  s2.attach(26);
-  s1.writeMicroseconds(1500);
-  s2.writeMicroseconds(1500);
+  s1.attach(7);
+  s2.attach(10);
+  s1.writeMicroseconds(1000);
+  s2.writeMicroseconds(1000);
   Serial.begin(9600);
+  while(!Serial){
+    ;
+  }
 }
 
 int currPos = 1500; 
@@ -31,7 +34,7 @@ int angleConstrain(int currentAngle){
 
 void loop() {
   // put your main code here, to run repeatedly:
-
+  //Serial.println("PRINTING"); 
   if(Serial.available() > 0){
     Serial.println("RECEIVED TARGET");
     String input = Serial.readString();
@@ -43,7 +46,6 @@ void loop() {
     }else if(input.equals("CENTER")){
       state = CENTER;
     }
-
     switch(state){
       case LEFT:
         currPos -= 10;
@@ -58,13 +60,8 @@ void loop() {
       case CENTER:
         Serial.println("TARGET CENTERED");
         break;
-
       default: 
         break;
     }
-
   }
-
-  
-
 }
